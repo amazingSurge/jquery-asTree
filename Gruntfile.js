@@ -114,7 +114,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('default', ['clean', 'concat', 'uglify']);
 
   grunt.registerTask('js', ['jsbeautifier']);
 
