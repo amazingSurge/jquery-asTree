@@ -1,0 +1,139 @@
+ul.tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+        text-indent: 20px;
+        .tree-element {
+            text-indent: 0;
+        }
+        .tree-element > * {
+            text-indent: 0;
+        }
+    }
+   	ul {
+	    list-style: none;
+	    margin: 0;
+	    padding: 0;
+        li {
+            text-indent: 30px;
+            .tree-element {
+	            text-indent: 10px;
+	        }
+        }
+        ul {
+            li {
+	            text-indent: 40px;
+	            .tree-element {
+		            text-indent: 20px;
+		        }
+	        }
+            ul {
+                li {
+		            text-indent: 50px;
+		            .tree-element {
+			            text-indent: 30px;
+			        }
+		        }
+                ul {
+                    li {
+			            text-indent: 60px;
+			            .tree-element {
+				            text-indent: 40px;
+				        }
+			        }
+			        ul {
+	                    li {
+				            text-indent: 70px;
+				            .tree-element {
+					            text-indent: 50px;
+					        }
+				        }
+				        ul {
+		                    li {
+					            text-indent: 80px;
+					            .tree-element {
+						            text-indent: 60px;
+						        }
+					        }
+		                }
+	                }
+                }
+            }
+        }
+	}
+	.tree-toggler {
+	    background-image: url("../images/arrow-right.png");
+    	background-position: 8px 6px;
+	    background-repeat: no-repeat;
+	    display: inline-block;
+	    *display: inline;
+	    *zoom: 1;
+	    height: 20px;
+	    width: 20px;
+	    cursor: pointer;
+	    &.tree-open {
+	    	background-image: url("../images/arrow-down.png");
+	    	background-position: 5px 8px;
+	    }
+	}
+
+	li {
+		border-bottom: 1px dashed transparent;
+		border-top: 1px dashed transparent;
+		&:hover, .tree-element:hover {
+		    background-color: rgb(227, 244, 250);
+		    border-bottom: 1px solid rgb(222, 238, 244);
+		    border-top: 1px solid rgb(222, 238, 244);
+		}
+		&.tree-selected, &.tree-branch.tree-selected > .tree-element,
+		&.tree-branch.children-selected > .tree-element {
+			background-color: rgb(50, 184, 227);
+		    border-bottom: 1px solid rgb(47, 175, 215);
+		    border-top: 1px solid rgb(47, 175, 215);
+		    color: white;
+		}
+		&.tree-branch {
+			&:hover, &.tree-selected {
+				background-color: inherit;
+			    border-bottom: 1px dashed transparent;
+				border-top: 1px dashed transparent;
+				color: inherit;
+			}
+		}
+		.tree-element {
+			border-bottom: 1px dashed transparent;
+			border-top: 1px dashed transparent;
+		}
+	}
+
+	.tree-branch  {
+		 > ul {
+		 	display: none;
+			&.tree-expand {
+				display: block;
+			}
+		 }
+		&.tree-open {
+			> ul {
+				display: block;
+			}
+			>.tree-element >.tree-toggler {
+		    	background-image: url("../images/arrow-down.png");
+		    	background-position: 5px 8px;
+			}
+		}
+	}
+
+	.tree-element {
+		font-size: 0;
+		letter-spacing: -8px;
+
+		> * {
+			vertical-align: middle;
+			font-size: 14px;
+			letter-spacing: 0;
+			display: inline-block;
+		}
+	}
+}
