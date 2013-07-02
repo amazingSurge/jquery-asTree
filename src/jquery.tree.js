@@ -379,6 +379,12 @@
                 var $root = (this.$el[0].nodeName.toLowerCase() === 'ul' ? this.$el : this.$el.find('ul:first'));
                 this.root = $root.data('node');
 
+                if(this.options.multiSelect){
+                    this.selected = [];
+                }else{
+                    this.selected = null;
+                }
+
                 this.autoOpen();
 
                 // Bind events
@@ -485,6 +491,9 @@
             getRoot: function() {
                 return this.root;
             },
+            getSelected: function(){
+                return this.selected;
+            },
             autoOpen: function() {
                 var self = this,
                     $root = this.root.$dom;
@@ -565,7 +574,7 @@
         if(typeof options === 'string') {
             var method = options;
             var method_arguments = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : undefined;
-            if(/^(getRoot|get)$/.test(method)) {
+            if(/^(getRoot|get|getSelected)$/.test(method)) {
                 var api = this.first().data('tree');
                 if(api && typeof api[method] === 'function') {
                     return api[method].apply(api, method_arguments);
