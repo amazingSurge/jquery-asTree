@@ -67,6 +67,12 @@
 	<button id="position">position</button>
 	
 	<button id="level">level</button>
+
+	<button id="parents">parents</button>
+
+	<button id="children">children</button>
+
+	<button id="siblings">siblings</button>
 			
 <script src="js/jquery.js"></script>
 <script src="js/jquery.toc.min.js"></script>
@@ -144,11 +150,27 @@ $(document).ready(function(){
 	$('#position').on('click', function(){
 		var position = getSelected($('#files2')).data('node').position;
 		console.info(position);
-	})
+	});
 	$('#level').on('click', function(){
 		var level = getSelected($('#files2')).data('node').level;
 		console.info(level);
-	})
+	});
+
+	$('#parents').on('click', function(){
+		var parents = getSelected($('#files2')).data('node').parents();
+		console.info(parents);
+	});
+
+	$('#children').on('click', function(){
+		var children = getSelected($('#files2')).data('node').children();
+		console.info(children);
+	});
+
+	$('#siblings').on('click', function(){
+		var siblings = getSelected($('#files2')).data('node').siblings();
+		console.info(siblings);
+	});
+	
 
 	// $('#files3').tree({
 	//     data: data

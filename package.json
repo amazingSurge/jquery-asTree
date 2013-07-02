@@ -1,6 +1,29 @@
 {
-  "name": "jquery-plugin",
-  "version": "0.0.0-ignored",
+  "name": "jquery.tree",
+  "title": "jQuery Tree",
+  "description": "A jquery tree plugin.",
+  "version": "0.2.0",
+  "homepage": "https://github.com/amazingSurge/jquery-tree",
+  "author": {
+    "name": "amazingSurge",
+    "email": "amazingSurge@yahoo.com",
+    "url": "amazingSurge.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/amazingSurge/jquery-tree.git"
+  },
+  "bugs": "https://github.com/amazingSurge/jquery-tree/issues",
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "https://github.com/amazingSurge/jquery-tree/blob/master/LICENSE-GPL"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+  "keywords": [],
   "engines": {
     "node": ">= 0.8.0"
   },

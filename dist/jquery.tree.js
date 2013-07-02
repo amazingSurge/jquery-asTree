@@ -1,9 +1,9 @@
-/*! jQuery Tree - v0.1.0 - 2013-07-01
+/*! jQuery Tree - v0.2.0 - 2013-07-02
 * https://github.com/amazingSurge/jquery-tree
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function($) {
     var HtmlParser = (function() {
-        var HtmlParser = function(options){
+        var HtmlParser = function(options) {
             this.tpl = options.tpl;
         };
         HtmlParser.prototype = {
@@ -15,12 +15,13 @@
                 return $node.children('div').html();
             },
             renderTree: function($node, isRoot, api) {
-                var self = this, $children;
+                var self = this,
+                    $children;
 
                 if(isRoot) {
                     $children = $node;
                     $node.addClass('tree');
-                }else{
+                } else {
                     $children = $node.children('ul');
                 }
 
@@ -45,64 +46,64 @@
     })();
 
     var DataParser = (function() {
-        var DataParser = function(options){
+        var DataParser = function(options) {
             this.tpl = options.tpl;
         };
         DataParser.prototype = {
             constructor: DataParser,
-            getLeaf : function(data){
+            getLeaf: function(data) {
                 var content = this.tpl.leaf(data);
 
-                return '<li>' + content +'</li>';
-
+                return '<li>' + content + '</li>';
             },
-            getBranch : function(data){
-                var content = this.tpl.branch(data), 
+            getBranch: function(data) {
+                var content = this.tpl.branch(data),
                     children = this.getTree(data.children);
 
-                return '<li class="tree-branch">' + content + children +'</li>';
+                return '<li class="tree-branch">' + content + children + '</li>';
             },
-            getNode: function(data){
-                if(data.children){
+            getNode: function(data) {
+                if(data.children) {
                     return this.getBranch(data);
-                }else{
+                } else {
                     return this.getLeaf(data);
                 }
             },
-            getTree: function(data, isRoot){
+            getTree: function(data, isRoot) {
                 var output = '';
                 for(var key in data) {
                     output += this.getNode(data[key]);
                 }
-                if(isRoot){
+                if(isRoot) {
                     return '<ul class="tree">' + output + '</ul>';
                 } else {
                     return '<ul>' + output + '</ul>';
-                }            
+                }
             }
         };
         return DataParser;
     })();
 
 
-    var Node = (function(){
-        var Node = function($dom, isRoot, api){
+    var Node = (function() {
+        var Node = function($dom, isRoot, api) {
             this.$dom = $dom;
             this.api = api;
-            var position, parentPosition;
 
-            if (isRoot == null) { isRoot = false; }
+            if(isRoot == null) {
+                isRoot = false;
+            }
 
             this.position = [];
 
-            if (isRoot) {
+
+            if(isRoot) {
                 this.type = 'root';
-                
             } else {
                 this.selected = false;
                 if(this.hasChildren()) {
                     this.type = 'branch';
-                    this.opened = false;
+                    this.opened = this.isOpened();
                 } else {
                     this.type = 'leaf';
                 }
@@ -114,19 +115,21 @@
             init: function() {
                 switch(this.type) {
                     case 'root':
-                        this.children = this.$dom.get(0).children;
-                        // this.position = [];
+                        this._children = this.$dom.get(0).children;
+                        this.position = [];
                         this.level = 0;
+                        this.parent = null;
                         this.$parent = null;
                         break;
                     case 'branch':
                     case 'leaf':
                         var children_ul = this.$dom.children('ul');
-                        if(children_ul.length > 0){
-                            this.children = children_ul.get(0).children;
+                        if(children_ul.length > 0) {
+                            this._children = children_ul.get(0).children;
+                        } else {
+                            this._children = [];
                         }
 
-                        //this.children = this.$dom.children('ul').children();
                         this.$parent = this.$dom.parents('li.tree-branch').eq(0);
 
                         if(this.$parent.length === 0) {
@@ -134,46 +137,85 @@
                         }
 
                         this.parent = this.$parent.data('node');
-                        // this.position = this.parent.position.concat([this.$dom.index()+1]);
+                        this.position = this.parent.position.concat([this.$dom.index() + 1]);
                         this.level = this.parent.level + 1;
                         break;
                 }
             },
-            getDom: function() {
+            // Retrieve the DOM elements matched by the Node object.
+            get: function() {
                 return this.$dom;
             },
-            getParent: function() {
-                return this.$parent;
+            parents: function() {
+                var parents = [];
+
+                var _iterate = function(node) {
+                    if(node.parent !== null) {
+                        parents.push(node.parent);
+                        _iterate(node.parent);
+                    }
+                };
+                _iterate(this);
+                return parents;
             },
-            getChildren: function() {
-                return $(this.children);
+            children: function() {
+                var children = [];
+                var node;
+                for(var i = 0; i < this._children.length; i++) {
+                    node = $(this._children[i]).data('node');
+                    if(node) {
+                        children.push(node);
+                    }
+                }
+
+                return children;
+            },
+            siblings: function() {
+                var siblings = [];
+                var $siblings = this.$dom.siblings();
+                var node;
+
+                for(var i = 0; i < $siblings.length; i++) {
+                    node = $siblings.data('node');
+                    if(node) {
+                        siblings.push(node);
+                    }
+                }
+                return siblings;
             },
             hasChildren: function() {
                 return this.$dom.children('ul').children('li').length !== 0;
             },
-            open: function(iterate){
+            isOpened: function() {
+                if(typeof this.opened === 'undefined') {
+                    return this.$dom.is('.tree-open');
+                } else {
+                    return this.opened;
+                }
+            },
+            open: function(iterate) {
                 this.opened = true;
                 this.$dom.addClass('tree-open');
-                this.childrenSelect();
 
-                if (iterate){
+                // open parents nodes
+                if(iterate) {
                     var _iterate = function(_node) {
-                        if(_node.parent){
+                        if(_node.parent) {
                             _node.parent.open(true);
                             _iterate(_node.parent);
-                        }  
+                        }
                     }
                     _iterate(this);
                 }
             },
-            close: function(iterate){
+            close: function(iterate) {
                 this.opened = false;
                 this.$dom.removeClass('tree-open');
-                this.childrenSelect();
 
+                // close children nodes
                 if(iterate) {
                     var _iterate = function(_node) {
-                        for(var i=0; i< _node.children.length; i++){
+                        for(var i = 0; i < _node.children.length; i++) {
                             var item = _node.children[i],
                                 $node = $(item),
                                 node = $node.data('node');
@@ -181,82 +223,84 @@
                                 node.close(true);
                             }
                         }
-                    }
+                    };
                     _iterate(this);
                 }
-                         
+
             },
-            childrenSelect: function() {
-                if(this.$dom.find('li').hasClass('tree-selected')) {
-                    this.$dom[this.opened ? 'removeClass' : 'addClass']('children-selected');
-                }
-            },
-            toggle: function(){
-                if(this.opened){
+            toggleOpen: function() {
+                if(this.opened) {
                     this.close();
-                }else{
+                } else {
                     this.open();
                 }
             },
-            select: function(nodes){
-                nodes.each(function (i, node) {
-                    var $node = $(node); 
-                    $node.data('node').selected = false;
-                    $node.removeClass('children-selected');
-                    $node.removeClass('tree-selected');
-                });
-
+            toggleSelect: function() {
+                if(this.selected) {
+                    this.unselect();
+                } else {
+                    this.select();
+                }
+            },
+            select: function() {
                 this.selected = true;
                 this.$dom.addClass('tree-selected');
             },
-            switchType: function(node) {
-                if(node.type === 'leaf'){
+            unselect: function() {
+                this.selected = false;
+                this.$dom.removeClass('tree-selected');
+            },
+            toBranch: function() {
+                if(this.type === 'leaf') {
                     var content = this.$dom.html();
-                    node.$dom.addClass('tree-branch');
-                    node.$dom.html(this.api.options.tpl.branch(content) + '<ul></ul>');
+                    this.$dom.addClass('tree-branch');
+                    this.$dom.html(this.api.options.tpl.branch(content) + '<ul></ul>');
                 }
             },
-            append: function(data){
+            append: function(data) {
+                if(this.type === 'leaf') {
+                    this.toBranch();
+                }
+
                 var html = this.api.dataParser.getNode(data);
-
-                this.switchType(this.$dom.data('node'));
-
                 var $node = $(html).appendTo(this.$dom.children('ul'));
 
-                if(this.type === 'leaf'){
+                if(this.type === 'leaf') {
                     this.api.attach(this.$dom, false, this.api);
-                }else{
+                } else {
                     this.api.attach($node, false, this.api);
                 }
 
                 return this;
             },
-            prepend: function(data){
+            prepend: function(data) {
+                if(this.type === 'leaf') {
+                    this.toBranch();
+                }
+
                 var html = this.api.dataParser.getNode(data);
-
-                this.switchType(this.$dom.data('node'));
-
                 var $node = $(html).prependTo(this.$dom.children('ul'));
 
-                if(this.type === 'leaf'){
+                if(this.type === 'leaf') {
                     this.api.attach(this.$dom, false, this.api);
-                }else{
+                } else {
                     this.api.attach($node, false, this.api);
                 }
 
                 return this;
-
             },
-            after: function(data){
+            after: function(data) {
                 var html = this.api.dataParser.getNode(data);
-                this.$dom.after($(html));
+                this.$dom.after(html);
+
                 var $node = this.$dom.next();
                 this.api.attach($node, false, this.api);
                 return this;
             },
-            before: function(data){
+            before: function(data) {
                 var html = this.api.dataParser.getNode(data);
-                this.$dom.before($(html));
+                this.$dom.before(html);
+
                 var $node = this.$dom.prev();
                 this.api.attach($node, false, this.api);
                 return this;
@@ -285,24 +329,24 @@
             // keyboard: false, // Support keyboard navigation.
             dataFromHtml: false,
             data: null,
+            multiSelect: false,
 
             tpl: {
-                toggler: function(node){
+                toggler: function(node) {
                     return '<i class="tree-toggler"></i>'
                 },
                 branch: function(node) {
                     var content = this.branchContent(node);
                     var toggler = this.toggler(node);
-
-                    return  '<div class="tree-element">' +
-                                toggler +
-                                '<div class="element-content">' + content + '</div>' +
-                            '</div>';
+                    return '<div class="tree-element">' +
+                        toggler +
+                        '<div class="element-content">' + content + '</div>' +
+                        '</div>';
                 },
-                branchContent: function(node){
-                    if(typeof(node) === 'object'){
+                branchContent: function(node) {
+                    if(typeof(node) === 'object') {
                         return node.name;
-                    }else{
+                    } else {
                         return node;
                     }
                 },
@@ -311,23 +355,14 @@
 
                     return content;
                 },
-                leafContent: function(node){
-                    if(typeof(node) === 'object'){
+                leafContent: function(node) {
+                    if(typeof node === 'object') {
                         return node.name;
-                    }else{
+                    } else {
                         return node;
                     }
                 }
-            },
-            onTogglerClick: function() {
-            
-            },
-            onBranchClick: function() {
-
-            },
-            onLeafClick: function() {
-
-            }      
+            }
         };
 
         Tree.prototype = {
@@ -335,16 +370,15 @@
             _init: function() {
                 // init structure
                 var self = this;
-                if (this.options.dataFromHtml === true) {
+                if(this.options.dataFromHtml === true) {
                     this._createFromHtml();
                 } else {
                     this._createFromData();
-                } 
+                }
 
                 var $root = (this.$el[0].nodeName.toLowerCase() === 'ul' ? this.$el : this.$el.find('ul:first'));
                 this.root = $root.data('node');
 
-                console.log(typeof this.options.autoOpen)
                 this.autoOpen();
 
                 // Bind events
@@ -352,137 +386,9 @@
                     click: $.proxy(this._click, this)
                 });
             },
-            open: function(position, iterate){
-                var node = this.get(position);
-                if(node){
-                    return node.open(iterate);
-                }
-            },
-            close: function(position, iterate){
-                var node = this.get(position);
-                if(node){
-                    return node.close(iterate);
-                }
-            },
-            select: function(position){
-                var node = this.get(position);
-                if(node) {
-                    return node.select(this.$el.find('li'));
-                }
-            },
-            get: function(position) {
-                if(!$.isArray(position)){
-                    position = [];
-                }
-
-                try {
-                    var _iterate = function(node, index){
-                        return $(node.children[index]).data('node');
-                    }
-
-                    var node = this.root;
-                    for(var i in position){
-                        node = _iterate(node, position[i]-1)
-                    }
-                } catch(e) {
-                    return null;
-                }
-                return node;
-            },
-            getRoot: function(){
-                return this.root;
-            },
-            autoOpen: function() {
-                var self = this,
-                    $root = this.root.$dom;
-
-                switch(typeof self.options.autoOpen){
-                    case 'boolean':
-                    $root.find('li').each(function (i, item){
-                        var $node = $(item),
-                            node = $node.data('node');
-                        if(self.options.autoOpen === true && node.type === 'branch') {
-                            node.open();
-                        }
-                    });
-                        break;
-                    case 'number':
-                    $root.find('li').each(function (i, item){
-                        var $node = $(item),
-                            node = $node.data('node');
-                        if(node.type === 'branch' && node.level <= self.options.autoOpen) {
-                            node.open();
-                        }
-                    });
-                        break;
-                    case 'object':
-                        if($.isArray(self.options.autoOpen)){
-                             // var _iterate = function(node) {
-                             //    if(node.parent){
-                             //        node.parent.open(true);
-                             //        _iterate(node.parent);
-                             //    }  
-                             // }
-                             // _iterate(self.get(self.options.autoOpen));
-                             self.get(self.options.autoOpen).open(true);
-                        }
-                        break;
-                }
-            },
-            append: function(position, data){
-                var node = this.get(position);
-                if(node){
-                    return node.append(data);
-                }
-            },
-            prepend: function(position, data){
-                var node = this.get(position);
-                if(node){
-                    return node.prepend(data);
-                }
-            },
-            after: function(position, data){
-                var node = this.get(position);
-                if(node){
-                    return node.after(data);
-                }
-            },
-            before: function(position,data){
-                var node = this.get(position);
-                if(node){
-                    return node.before(data);
-                }
-            },
-            remove: function(position) {;
-                var node = this.get(position);
-                if(node){
-                    return node.remove(data);
-                }
-            },
-            attach: function($node, isRoot, api){
-                var self = this;
-                $node.data('node', new Node($node, isRoot, api));
-
-                var $children;
-                if(isRoot){
-                    $children = $node;
-                } else {
-                    $children = $node.children('ul');
-                }
-                
-                if($children.length !== 0) { // has child
-                    var _iterate = function ($tree) {
-                        $tree.children('li').each(function(i, node){
-                            var $node = $(node);
-                            self.attach($node, false, api);
-                        });
-                    };
-                    _iterate($children);
-                }
-            },
-            _createFromData: function(){
+            _createFromData: function() {
                 var html = '';
-                if(this.options.data){
+                if(this.options.data) {
                     html = this.dataParser.getTree(this.options.data, true);
                 }
                 this.$el.html(html);
@@ -490,51 +396,191 @@
             },
             _createFromHtml: function() {
                 var $tree = (this.$el[0].nodeName.toLowerCase() === 'ul' ? this.$el : this.$el.find('ul:first'));
-                
+
                 this.htmlParser.renderTree($tree, true, this);
                 this.attach($tree, true, this);
             },
             _click: function(e) {
                 var $target = $(e.target).closest('.tree-toggler, li')
-                    $node = $(e.target).closest('li'),
+                $node = $(e.target).closest('li'),
                     node = $node.data('node');
 
-                switch ($target.attr('class')){
+                switch($target.attr('class')) {
                     case 'tree-toggler':
-                        node.toggle();
+                        node.toggleOpen();
                         break;
                     default:
-                        node.select(this.$el.find('li'));
+                        node.toggleSelect();
                         break;
                 }
-                // console.log($node,node) 
-                // console.log(node.$parent, node.$parent.data('node'))
-                // console.log(node.$parent.children('ul').children('li'))
+            },
+            attach: function($node, isRoot, api) {
+                var self = this;
+                $node.data('node', new Node($node, isRoot, api));
+
+                var $children;
+                if(isRoot) {
+                    $children = $node;
+                } else {
+                    $children = $node.children('ul');
+                }
+
+                if($children.length !== 0) { // has child
+                    var _iterate = function($tree) {
+                        $tree.children('li').each(function(i, node) {
+                            var $node = $(node);
+                            self.attach($node, false, api);
+                        });
+                    };
+                    _iterate($children);
+                }
+            },
+            open: function(position, iterate) {
+                var node = this.get(position);
+                if(node) {
+                    node.open(iterate);
+                }
+                return this;
+            },
+            close: function(position, iterate) {
+                var node = this.get(position);
+                if(node) {
+                    node.close(iterate);
+                }
+                return this;
+            },
+            select: function(position) {
+                var node = this.get(position);
+                if(node) {
+                    node.select(this.$el.find('li'));
+                }
+                return this;
+            },
+            unselect: function(position) {
+                var node = this.get(position);
+                if(node) {
+                    node.unselect(this.$el.find('li'));
+                }
+                return this;
+            },
+            get: function(position) {
+                if(!$.isArray(position)) {
+                    position = [];
+                }
+
+                try {
+                    var _iterate = function(node, index) {
+                        return $(node.children[index]).data('node');
+                    }
+
+                    var node = this.root;
+                    for(var i in position) {
+                        node = _iterate(node, position[i] - 1)
+                    }
+                } catch(e) {
+                    return null;
+                }
+                return node;
+            },
+            getRoot: function() {
+                return this.root;
+            },
+            autoOpen: function() {
+                var self = this,
+                    $root = this.root.$dom;
+
+                switch(typeof self.options.autoOpen) {
+                    case 'boolean':
+                        $root.find('li').each(function(i, item) {
+                            var $node = $(item),
+                                node = $node.data('node');
+                            if(self.options.autoOpen === true && node.type === 'branch') {
+                                node.open();
+                            }
+                        });
+                        break;
+                    case 'number':
+                        $root.find('li').each(function(i, item) {
+                            var $node = $(item),
+                                node = $node.data('node');
+                            if(node.type === 'branch' && node.level <= self.options.autoOpen) {
+                                node.open();
+                            }
+                        });
+                        break;
+                    case 'object':
+                        if($.isArray(self.options.autoOpen)) {
+                            // var _iterate = function(node) {
+                            //    if(node.parent){
+                            //        node.parent.open(true);
+                            //        _iterate(node.parent);
+                            //    }  
+                            // }
+                            // _iterate(self.get(self.options.autoOpen));
+                            //self.get(self.options.autoOpen).open(true);
+                        }
+                        break;
+                }
+            },
+            append: function(position, data) {
+                var node = this.get(position);
+                if(node) {
+                    node.append(data);
+                }
+                return this;
+            },
+            prepend: function(position, data) {
+                var node = this.get(position);
+                if(node) {
+                    node.prepend(data);
+                }
+                return this;
+            },
+            after: function(position, data) {
+                var node = this.get(position);
+                if(node) {
+                    node.after(data);
+                }
+                return this;
+            },
+            before: function(position, data) {
+                var node = this.get(position);
+                if(node) {
+                    node.before(data);
+                }
+                return this;
+            },
+            remove: function(position) {
+                var node = this.get(position);
+                if(node) {
+                    node.remove(data);
+                }
+                return this;
             }
         };
         return Tree;
     })();
 
     $.fn.tree = function(options) {
-        if (typeof options === 'string') {
+        if(typeof options === 'string') {
             var method = options;
             var method_arguments = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : undefined;
-            if(/^()$/.test(method)){
+            if(/^(getRoot|get)$/.test(method)) {
                 var api = this.first().data('tree');
-                if (api && typeof api[method] === 'function') {
+                if(api && typeof api[method] === 'function') {
                     return api[method].apply(api, method_arguments);
                 }
             } else {
                 return this.each(function() {
                     var api = $.data(this, 'tree');
-                    if (api && typeof api[method] === 'function') {
+                    if(api && typeof api[method] === 'function') {
                         api[method].apply(api, method_arguments);
                     }
                 });
             }
         } else {
             return this.each(function() {
-                if (!$.data(this, 'tree')) {
+                if(!$.data(this, 'tree')) {
                     $.data(this, 'tree', new Tree(this, options));
                 }
             });

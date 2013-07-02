@@ -15,7 +15,28 @@ In your web page:
 <script src="dist/jquery.tree.min.js"></script>
 <script>
 jQuery(function($) {
-  $.awesome(); // "awesome"
+	var data = [{
+        name: 'folder1',
+        children: [
+            { name: 'child1'},
+            { name: 'child2'}
+        ]
+    },{
+        name: 'folder2',
+        children: [{ 
+        	name: 'folder3',
+        	children: [
+	            { name: 'child3'},
+	            { name: 'child4'}
+	        ]
+	    }]
+    },{
+        name: 'child5'
+    }];
+
+	$('#tree').tree({
+		data:data
+	});
 });
 </script>
 ```

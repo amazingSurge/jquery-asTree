@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     // Metadata.
-    pkg: grunt.file.readJSON('jquery.tree.jquery.json'),
+    pkg: grunt.file.readJSON('package.json'),
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
@@ -84,7 +84,7 @@ module.exports = function(grunt) {
     jsbeautifier : {
       files : ["src/**/*.js"],
       options : {
-        indent_size: 2,
+        indent_size: 4,
         indent_char: " ",
         indent_level: 0,
         indent_with_tabs: false,
@@ -94,7 +94,7 @@ module.exports = function(grunt) {
         brace_style: "collapse",
         keep_array_indentation: false,
         keep_function_indentation: false,
-        space_before_conditional: true,
+        space_before_conditional: false,
         eval_code: false,
         indent_case: false,
         wrap_line_length: 150,
