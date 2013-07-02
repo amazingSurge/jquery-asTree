@@ -126,6 +126,7 @@ $(document).ready(function(){
 		return $selected;
 	}
 
+
 	$('#before').on('click', function() {
 		getSelected($('#files2')).data('node').before(leaf);
 	});
@@ -148,7 +149,7 @@ $(document).ready(function(){
 	});
 
 	$('#position').on('click', function(){
-		var position = getSelected($('#files2')).data('node').position;
+		var position = getSelected($('#files2')).data('node').position();
 		console.info(position);
 	});
 	$('#level').on('click', function(){

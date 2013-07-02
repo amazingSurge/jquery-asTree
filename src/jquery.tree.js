@@ -94,9 +94,6 @@
                 isRoot = false;
             }
 
-            this.position = [];
-
-
             if(isRoot) {
                 this.type = 'root';
             } else {
@@ -116,7 +113,6 @@
                 switch(this.type) {
                     case 'root':
                         this._children = this.$dom.get(0).children;
-                        this.position = [];
                         this.level = 0;
                         this.parent = null;
                         this.$parent = null;
@@ -137,7 +133,6 @@
                         }
 
                         this.parent = this.$parent.data('node');
-                        this.position = this.parent.position.concat([this.$dom.index() + 1]);
                         this.level = this.parent.level + 1;
                         break;
                 }
@@ -145,6 +140,19 @@
             // Retrieve the DOM elements matched by the Node object.
             get: function() {
                 return this.$dom;
+            },
+            position: function(){
+                var postions = [];
+                
+                var _iterate = function(node){
+                    postions.push(node.$dom.index()+1);
+                    if(node.parent && node.parent.type !== 'root'){
+                        _iterate(node.parent);
+                    }
+                }
+                _iterate(this);
+
+                return postions.reverse();
             },
             parents: function() {
                 var parents = [];
