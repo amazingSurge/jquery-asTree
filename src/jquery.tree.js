@@ -94,9 +94,6 @@
                 isRoot = false;
             }
 
-            this.position = [];
-
-
             if(isRoot) {
                 this.type = 'root';
             } else {
@@ -116,7 +113,6 @@
                 switch(this.type) {
                     case 'root':
                         this._children = this.$dom.get(0).children;
-                        this.position = [];
                         this.level = 0;
                         this.parent = null;
                         this.$parent = null;
@@ -137,7 +133,6 @@
                         }
 
                         this.parent = this.$parent.data('node');
-                        this.position = this.parent.position.concat([this.$dom.index() + 1]);
                         this.level = this.parent.level + 1;
                         break;
                 }
@@ -145,6 +140,19 @@
             // Retrieve the DOM elements matched by the Node object.
             get: function() {
                 return this.$dom;
+            },
+            position: function(){
+                var postions = [];
+                
+                var _iterate = function(node){
+                    postions.push(node.$dom.index()+1);
+                    if(node.parent && node.parent.type !== 'root'){
+                        _iterate(node.parent);
+                    }
+                }
+                _iterate(this);
+
+                return postions.reverse();
             },
             parents: function() {
                 var parents = [];
@@ -199,14 +207,15 @@
 
                 // open parents nodes
                 if(iterate) {
-                    var _iterate = function(_node) {
-                        if(_node.parent) {
-                            _node.parent.open(true);
-                            _iterate(_node.parent);
-                        }
+                    var parents = this.parents();
+                    for(var i = 0; i < parents.length; i++) {
+                        if(parents[i].type !== 'root') {
+                            parents[i].open();
+                        }                      
                     }
-                    _iterate(this);
                 }
+
+                return this;
             },
             close: function(iterate) {
                 this.opened = false;
@@ -214,19 +223,16 @@
 
                 // close children nodes
                 if(iterate) {
-                    var _iterate = function(_node) {
-                        for(var i = 0; i < _node.children.length; i++) {
-                            var item = _node.children[i],
-                                $node = $(item),
-                                node = $node.data('node');
-                            if(node.type === 'branch') {
-                                node.close(true);
-                            }
+                    var children = this.children();
+                    for(var i = 0; i < children.length; i++) {
+                        if(children[i].type === 'branch') {
+                            children[i].close(true);
                         }
-                    };
-                    _iterate(this);
+                    }
+
                 }
 
+                return this;
             },
             toggleOpen: function() {
                 if(this.opened) {
@@ -234,21 +240,33 @@
                 } else {
                     this.open();
                 }
+                return this;
             },
-            toggleSelect: function() {
-                if(this.selected) {
-                    this.unselect();
-                } else {
+            toggleSelect: function(deselect) {
+                if(deselect) {
+                   if(this.selected) {
+                        this.unselect();
+                        return false;
+                    } else {
+                        this.select();
+                        return true;
+                    } 
+                }else{
                     this.select();
+                    return true;
                 }
+		
+		return this;
             },
             select: function() {
                 this.selected = true;
                 this.$dom.addClass('tree-selected');
+                return this;
             },
             unselect: function() {
                 this.selected = false;
                 this.$dom.removeClass('tree-selected');
+                return this;
             },
             toBranch: function() {
                 if(this.type === 'leaf') {
@@ -256,6 +274,7 @@
                     this.$dom.addClass('tree-branch');
                     this.$dom.html(this.api.options.tpl.branch(content) + '<ul></ul>');
                 }
+                return this;
             },
             append: function(data) {
                 if(this.type === 'leaf') {
@@ -307,6 +326,8 @@
             },
             remove: function() {
                 this.$dom.remove();
+
+                return this;
             }
         };
         return Node;
@@ -330,6 +351,7 @@
             dataFromHtml: false,
             data: null,
             multiSelect: false,
+            deselect: false,
 
             tpl: {
                 toggler: function(node) {
@@ -392,6 +414,12 @@
                     click: $.proxy(this._click, this)
                 });
             },
+            _createFromHtml: function() {
+                var $tree = (this.$el[0].nodeName.toLowerCase() === 'ul' ? this.$el : this.$el.find('ul:first'));
+
+                this.htmlParser.renderTree($tree, true, this);
+                this.attach($tree, true, this);
+            },
             _createFromData: function() {
                 var html = '';
                 if(this.options.data) {
@@ -400,15 +428,9 @@
                 this.$el.html(html);
                 this.attach(this.$el.children('ul'), true, this);
             },
-            _createFromHtml: function() {
-                var $tree = (this.$el[0].nodeName.toLowerCase() === 'ul' ? this.$el : this.$el.find('ul:first'));
-
-                this.htmlParser.renderTree($tree, true, this);
-                this.attach($tree, true, this);
-            },
             _click: function(e) {
-                var $target = $(e.target).closest('.tree-toggler, li')
-                $node = $(e.target).closest('li'),
+                var $target = $(e.target).closest('.tree-toggler, li'),
+                    $node = $(e.target).closest('li'),
                     node = $node.data('node');
 
                 switch($target.attr('class')) {
@@ -416,7 +438,30 @@
                         node.toggleOpen();
                         break;
                     default:
-                        node.toggleSelect();
+                        var judge = node.toggleSelect(this.options.deselect);
+                        if(this.options.multiSelect) {
+                            if(judge){
+                                this.selected.push(node);
+                            }else{
+                                this.selected = $.grep(this.selected, function(n){
+                                    return n.$dom !== node.$dom;
+                                });
+                            }
+                        }else{
+                            if(this.selected) {
+                                if(this.options.deselect) {
+                                   this.selected.unselect(); 
+                                }else if(this.selected !== node) {
+                                    this.selected.unselect();
+                                }
+                            }
+
+                            if(judge){
+                                this.selected = node;
+                            }else{
+                                this.selected = null;
+                            }
+                        }
                         break;
                 }
             },
@@ -458,14 +503,14 @@
             select: function(position) {
                 var node = this.get(position);
                 if(node) {
-                    node.select(this.$el.find('li'));
+                    node.select();
                 }
                 return this;
             },
             unselect: function(position) {
                 var node = this.get(position);
                 if(node) {
-                    node.unselect(this.$el.find('li'));
+                    node.unselect();
                 }
                 return this;
             },
@@ -475,12 +520,12 @@
                 }
 
                 try {
-                    var _iterate = function(node, index) {
-                        return $(node.children[index]).data('node');
+                    var _iterate = function(_node, index) {
+                        return $(_node._children[index]).data('node');
                     }
 
                     var node = this.root;
-                    for(var i in position) {
+                    for(var i = 0; i < position.length; i++) {
                         node = _iterate(node, position[i] - 1)
                     }
                 } catch(e) {
@@ -519,14 +564,7 @@
                         break;
                     case 'object':
                         if($.isArray(self.options.autoOpen)) {
-                            // var _iterate = function(node) {
-                            //    if(node.parent){
-                            //        node.parent.open(true);
-                            //        _iterate(node.parent);
-                            //    }  
-                            // }
-                            // _iterate(self.get(self.options.autoOpen));
-                            //self.get(self.options.autoOpen).open(true);
+                            this.get(self.options.autoOpen).open(true);
                         }
                         break;
                 }
