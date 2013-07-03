@@ -141,12 +141,12 @@
             get: function() {
                 return this.$dom;
             },
-            position: function(){
+            position: function() {
                 var postions = [];
-                
-                var _iterate = function(node){
-                    postions.push(node.$dom.index()+1);
-                    if(node.parent && node.parent.type !== 'root'){
+
+                var _iterate = function(node) {
+                    postions.push(node.$dom.index() + 1);
+                    if(node.parent && node.parent.type !== 'root') {
                         _iterate(node.parent);
                     }
                 }
@@ -196,14 +196,14 @@
             },
             isOpened: function() {
                 if(typeof this.opened === 'undefined') {
-                    return this.$dom.is('.tree-open');
+                    return this.$dom.is('.tree_open');
                 } else {
                     return this.opened;
                 }
             },
             open: function(iterate) {
                 this.opened = true;
-                this.$dom.addClass('tree-open');
+                this.$dom.addClass('tree_open');
 
                 // open parents nodes
                 if(iterate) {
@@ -211,15 +211,19 @@
                     for(var i = 0; i < parents.length; i++) {
                         if(parents[i].type !== 'root') {
                             parents[i].open();
-                        }                      
+                        }
                     }
+                }
+
+                if(!this.api.options.multiSelect && this.hasChildrenSelect()) {
+                    this.$dom.removeClass('tree_childrenSelected');
                 }
 
                 return this;
             },
             close: function(iterate) {
                 this.opened = false;
-                this.$dom.removeClass('tree-open');
+                this.$dom.removeClass('tree_open');
 
                 // close children nodes
                 if(iterate) {
@@ -229,10 +233,16 @@
                             children[i].close(true);
                         }
                     }
+                }
 
+                if(!this.api.options.multiSelect && this.hasChildrenSelect()) {
+                    this.$dom.addClass('tree_childrenSelected');
                 }
 
                 return this;
+            },
+            hasChildrenSelect: function() {
+                return this.$dom.find('li.tree_selected').length !== 0;
             },
             toggleOpen: function() {
                 if(this.opened) {
@@ -242,30 +252,43 @@
                 }
                 return this;
             },
-            toggleSelect: function(deselect) {
-                if(deselect) {
-                   if(this.selected) {
-                        this.unselect();
-                        return false;
-                    } else {
-                        this.select();
-                        return true;
-                    } 
-                }else{
+            toggleSelect: function() {
+                if(this.selected) {
+                    this.unselect();
+                } else {
                     this.select();
-                    return true;
                 }
-		
-		return this;
+
+                return this;
             },
             select: function() {
                 this.selected = true;
-                this.$dom.addClass('tree-selected');
+                this.$dom.addClass('tree_selected');
+                if(this.api.options.multiSelect) {
+                    this.api.selected.push(this);
+                } else {
+                    if(this.api.selected) {
+                        this.api.selected.unselect(true);
+                    }
+                    this.api.selected = this;
+                }
+
                 return this;
             },
-            unselect: function() {
-                this.selected = false;
-                this.$dom.removeClass('tree-selected');
+            unselect: function(force) {
+                if(this.api.options.canUnselect || force) {
+                    this.selected = false;
+                    this.$dom.removeClass('tree_selected');
+
+                    if(this.api.options.multiSelect) {
+                        var self = this;
+                        this.api.selected = $.grep(this.api.selected, function(node) {
+                            return node.$dom !== self.$dom;
+                        });
+                    } else {
+                        this.api.selected = null;
+                    }
+                }
                 return this;
             },
             toBranch: function() {
@@ -351,7 +374,7 @@
             dataFromHtml: false,
             data: null,
             multiSelect: false,
-            deselect: false,
+            canUnselect: true,
 
             tpl: {
                 toggler: function(node) {
@@ -401,9 +424,9 @@
                 var $root = (this.$el[0].nodeName.toLowerCase() === 'ul' ? this.$el : this.$el.find('ul:first'));
                 this.root = $root.data('node');
 
-                if(this.options.multiSelect){
+                if(this.options.multiSelect) {
                     this.selected = [];
-                }else{
+                } else {
                     this.selected = null;
                 }
 
@@ -436,42 +459,9 @@
                 switch($target.attr('class')) {
                     case 'tree-toggler':
                         node.toggleOpen();
-                        if(!this.options.multiSelect) {
-                            if($node.find('li').hasClass('tree-selected')) {
-                                if(node.opened) {
-                                    $node.removeClass('children-selected');
-                                }else{
-                                    $node.addClass('children-selected');
-                                }
-                            }
-                        }
-                        
                         break;
                     default:
-                        var judge = node.toggleSelect(this.options.deselect);
-                        if(this.options.multiSelect) {
-                            if(judge){
-                                this.selected.push(node);
-                            }else{
-                                this.selected = $.grep(this.selected, function(n){
-                                    return n.$dom !== node.$dom;
-                                });
-                            }
-                        }else{
-                            if(this.selected) {
-                                if(this.options.deselect) {
-                                   this.selected.unselect(); 
-                                }else if(this.selected !== node) {
-                                    this.selected.unselect();
-                                }
-                            }
-
-                            if(judge){
-                                this.selected = node;
-                            }else{
-                                this.selected = null;
-                            }
-                        }
+                        node.toggleSelect();
                         break;
                 }
             },
@@ -546,7 +536,7 @@
             getRoot: function() {
                 return this.root;
             },
-            getSelected: function(){
+            getSelected: function() {
                 return this.selected;
             },
             autoOpen: function() {

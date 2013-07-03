@@ -82,7 +82,7 @@ ul.tree .tree-toggler {
   *zoom: 1;
 }
 
-ul.tree .tree-toggler.tree-open {
+ul.tree .tree-toggler.tree_open {
   background-image: url("../images/arrow-down.png");
   background-position: 5px 8px;
 }
@@ -99,9 +99,9 @@ ul.tree li .tree-element:hover {
   border-bottom: 1px solid #deeef4;
 }
 
-ul.tree li.tree-selected,
-ul.tree li.tree-branch.tree-selected > .tree-element,
-ul.tree li.tree-branch.children-selected > .tree-element {
+ul.tree li.tree_selected,
+ul.tree li.tree-branch.tree_selected > .tree-element,
+ul.tree li.tree-branch.tree_childrenSelected > .tree-element {
   color: white;
   background-color: #32b8e3;
   border-top: 1px solid #2fafd7;
@@ -109,7 +109,7 @@ ul.tree li.tree-branch.children-selected > .tree-element {
 }
 
 ul.tree li.tree-branch:hover,
-ul.tree li.tree-branch.tree-selected {
+ul.tree li.tree-branch.tree_selected {
   color: inherit;
   background-color: inherit;
   border-top: 1px dashed transparent;
@@ -129,11 +129,11 @@ ul.tree .tree-branch > ul.tree-expand {
   display: block;
 }
 
-ul.tree .tree-branch.tree-open > ul {
+ul.tree .tree-branch.tree_open > ul {
   display: block;
 }
 
-ul.tree .tree-branch.tree-open > .tree-element > .tree-toggler {
+ul.tree .tree-branch.tree_open > .tree-element > .tree-toggler {
   background-image: url("../images/arrow-down.png");
   background-position: 5px 8px;
 }

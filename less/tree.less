@@ -72,7 +72,7 @@ ul.tree {
 	    height: 20px;
 	    width: 20px;
 	    cursor: pointer;
-	    &.tree-open {
+	    &.tree_open {
 	    	background-image: url("../images/arrow-down.png");
 	    	background-position: 5px 8px;
 	    }
@@ -86,15 +86,15 @@ ul.tree {
 		    border-bottom: 1px solid rgb(222, 238, 244);
 		    border-top: 1px solid rgb(222, 238, 244);
 		}
-		&.tree-selected, &.tree-branch.tree-selected > .tree-element,
-		&.tree-branch.children-selected > .tree-element {
+		&.tree_selected, &.tree-branch.tree_selected > .tree-element,
+		&.tree-branch.tree_childrenSelected > .tree-element {
 			background-color: rgb(50, 184, 227);
 		    border-bottom: 1px solid rgb(47, 175, 215);
 		    border-top: 1px solid rgb(47, 175, 215);
 		    color: white;
 		}
 		&.tree-branch {
-			&:hover, &.tree-selected {
+			&:hover, &.tree_selected {
 				background-color: inherit;
 			    border-bottom: 1px dashed transparent;
 				border-top: 1px dashed transparent;
@@ -114,7 +114,7 @@ ul.tree {
 				display: block;
 			}
 		 }
-		&.tree-open {
+		&.tree_open {
 			> ul {
 				display: block;
 			}

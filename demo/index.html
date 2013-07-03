@@ -116,7 +116,9 @@ $(document).ready(function(){
 	];
 
 	$('#files2').tree({
-		data:data
+		data:data,
+		multiSelect: false,
+		canUnselect: false
 	});
 
 	var leaf = {name: 'leaf.txt'};
@@ -125,7 +127,7 @@ $(document).ready(function(){
 		var $selected, self = this;
 		$tree.find('li').each(function(i, node) {
 			var $node = $(node);			
-			if($node.hasClass('tree-selected')){
+			if($node.hasClass('tree_selected')){
 				$selected = $node;
 			}	
 		});
