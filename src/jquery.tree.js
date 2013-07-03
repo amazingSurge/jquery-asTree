@@ -436,6 +436,16 @@
                 switch($target.attr('class')) {
                     case 'tree-toggler':
                         node.toggleOpen();
+                        if(!this.options.multiSelect) {
+                            if($node.find('li').hasClass('tree-selected')) {
+                                if(node.opened) {
+                                    $node.removeClass('children-selected');
+                                }else{
+                                    $node.addClass('children-selected');
+                                }
+                            }
+                        }
+                        
                         break;
                     default:
                         var judge = node.toggleSelect(this.options.deselect);
