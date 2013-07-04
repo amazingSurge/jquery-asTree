@@ -244,6 +244,9 @@
             hasChildrenSelect: function() {
                 return this.$dom.find('li.tree_selected').length !== 0;
             },
+            hasChildrenSelectBranch: function() {
+                return this.api.$el.find('li.tree_childrenSelected').length !== 0;
+            },
             toggleOpen: function() {
                 if(this.opened) {
                     this.close();
@@ -271,6 +274,10 @@
                         this.api.selected.unselect(true);
                     }
                     this.api.selected = this;
+                }
+
+                if(!this.api.options.multiSelect && this.hasChildrenSelectBranch()) {
+                    this.api.$el.find('li.tree_childrenSelected').removeClass('tree_childrenSelected');
                 }
 
                 return this;
