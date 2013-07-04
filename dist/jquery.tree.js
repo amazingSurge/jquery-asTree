@@ -1,4 +1,4 @@
-/*! jQuery Tree - v0.2.0 - 2013-07-03
+/*! jQuery Tree - v0.2.0 - 2013-07-04
 * https://github.com/amazingSurge/jquery-tree
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function($) {
@@ -244,6 +244,9 @@
             hasChildrenSelect: function() {
                 return this.$dom.find('li.tree_selected').length !== 0;
             },
+            hasChildrenSelectBranch: function() {
+                return this.api.$el.find('li.tree_childrenSelected').length !== 0;
+            },
             toggleOpen: function() {
                 if(this.opened) {
                     this.close();
@@ -271,6 +274,10 @@
                         this.api.selected.unselect(true);
                     }
                     this.api.selected = this;
+                }
+
+                if(!this.api.options.multiSelect && this.hasChildrenSelectBranch()) {
+                    this.api.$el.find('li.tree_childrenSelected').removeClass('tree_childrenSelected');
                 }
 
                 return this;
