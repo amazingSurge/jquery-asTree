@@ -5,14 +5,14 @@ A jquery tree plugin.
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/amazingSurge/jquery-tree/master/dist/jquery.tree.min.js
-[max]: https://raw.github.com/amazingSurge/jquery-tree/master/dist/jquery.tree.js
+[min]: https://raw.github.com/amazingSurge/jquery-tree/master/dist/jquery-tree.min.js
+[max]: https://raw.github.com/amazingSurge/jquery-tree/master/dist/jquery-tree.js
 
 In your web page:
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/jquery.tree.min.js"></script>
+<script src="dist/jquery-tree.min.js"></script>
 <script>
 jQuery(function($) {
 	var data = [{
