@@ -1,7 +1,7 @@
 {
-  "name": "jquery-tree",
+  "name": "jquery-asTree",
   "version": "0.2.0",
-  "main": "dist/jquery-tree.js",
+  "main": "dist/jquery-asTree.js",
   "ignore": [
     "**/.*",
     "node_modules",
