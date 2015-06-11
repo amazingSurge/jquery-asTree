@@ -6,11 +6,12 @@
   "homepage": "https://github.com/amazingSurge/jquery-asTree",
   "author": {
     "name": "amazingSurge",
-    "email": "amazingSurge@yahoo.com"
+    "email": "amazingSurge@yahoo.com",
+    "url": "amazingSurge.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/amazingSurge/jquery-asTree.git"
+    "url": "git@github.com:amazingSurge/jquery-asTree.git"
   },
   "bugs": "https://github.com/amazingSurge/jquery-asTree/issues",
   "licenses": [
