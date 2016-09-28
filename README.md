@@ -101,7 +101,7 @@ jQuery(function($) {
     name: 'child5'
   }];
 
-  $('.tree').tree({
+  $('.tree').asTree({
     data:data
   });
 });
