@@ -1,0 +1,126 @@
+/**
+* jQuery asTree v0.3.0
+* https://github.com/amazingSurge/jquery-asTree
+*
+* Copyright (c) amazingSurge
+* Released under the LGPL-3.0 license
+*/
+ul.tree {
+  padding: 0; 
+  margin: 0;
+  list-style: none;
+}
+ul.tree li {
+  text-indent: 20px;
+}
+ul.tree li .tree-element {
+  text-indent: 0;
+}
+ul.tree li .tree-element > * {
+  text-indent: 0;
+}
+ul.tree ul {
+  padding: 0; 
+  margin: 0;
+  list-style: none;
+}
+ul.tree ul li {
+  text-indent: 30px;
+}
+ul.tree ul li .tree-element {
+  text-indent: 10px;
+}
+ul.tree ul ul li {
+  text-indent: 40px;
+}
+ul.tree ul ul li .tree-element {
+  text-indent: 20px;
+}
+ul.tree ul ul ul li {
+  text-indent: 50px;
+}
+ul.tree ul ul ul li .tree-element {
+  text-indent: 30px;
+}
+ul.tree ul ul ul ul li {
+  text-indent: 60px;
+}
+ul.tree ul ul ul ul li .tree-element {
+  text-indent: 40px;
+}
+ul.tree ul ul ul ul ul li {
+  text-indent: 70px;
+}
+ul.tree ul ul ul ul ul li .tree-element {
+  text-indent: 50px;
+}
+ul.tree ul ul ul ul ul ul li {
+  text-indent: 80px;
+}
+ul.tree ul ul ul ul ul ul li .tree-element {
+  text-indent: 60px;
+}
+ul.tree .tree-toggler {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer; 
+  background-image: url("../images/arrow-right.png");
+  background-repeat: no-repeat;
+  background-position: 8px 6px;
+
+  *display: inline;
+  *zoom: 1;
+}
+ul.tree .tree-toggler.tree_open {
+  background-image: url("../images/arrow-down.png");
+  background-position: 5px 8px;
+}
+ul.tree li {
+  border-top: 1px dashed transparent; 
+  border-bottom: 1px dashed transparent;
+}
+ul.tree li:hover, ul.tree li .tree-element:hover {
+  background-color: #e3f4fa;
+  border-top: 1px solid #deeef4; 
+  border-bottom: 1px solid #deeef4;
+}
+ul.tree li.tree_selected, ul.tree li.tree-branch.tree_selected > .tree-element, ul.tree li.tree-branch.tree_childrenSelected > .tree-element {
+  color: white; 
+  background-color: #32b8e3;
+  border-top: 1px solid #2fafd7;
+  border-bottom: 1px solid #2fafd7;
+}
+ul.tree li.tree-branch:hover, ul.tree li.tree-branch.tree_selected {
+  color: inherit; 
+  background-color: inherit;
+  border-top: 1px dashed transparent;
+  border-bottom: 1px dashed transparent;
+}
+ul.tree li .tree-element {
+  border-top: 1px dashed transparent; 
+  border-bottom: 1px dashed transparent;
+}
+ul.tree .tree-branch > ul {
+  display: none;
+}
+ul.tree .tree-branch > ul.tree-expand {
+  display: block;
+}
+ul.tree .tree-branch.tree_open > ul {
+  display: block;
+}
+ul.tree .tree-branch.tree_open > .tree-element > .tree-toggler {
+  background-image: url("../images/arrow-down.png");
+  background-position: 5px 8px;
+}
+ul.tree .tree-element {
+  font-size: 0;
+  letter-spacing: -8px;
+}
+ul.tree .tree-element > * {
+  display: inline-block; 
+  font-size: 14px;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
