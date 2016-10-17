@@ -10,7 +10,7 @@ const NAMESPACE = 'asTree';
  * Plugin constructor
  **/
 class asTree {
-  constructor(element, options) {
+  constructor(element, options = {}) {
     this.$element = $(element);
     this.options = $.extend(true, {}, DEFAULTS, options);
     this.namespace = this.options.namespace;
@@ -47,7 +47,7 @@ class asTree {
   }
 
   _trigger(eventType, ...params) {
-    let data = [this].concat(...params);
+    let data = [this].concat(params);
 
     // event
     this.$element.trigger(`${NAMESPACE}::${eventType}`, data);
@@ -59,7 +59,7 @@ class asTree {
     let onFunction = `on${eventType}`;
 
     if (typeof this.options[onFunction] === 'function') {
-      this.options[onFunction].apply(this, ...params);
+      this.options[onFunction].apply(this, params);
     }
   }
 
@@ -251,7 +251,7 @@ class asTree {
   }
 
   static setDefaults(options) {
-    $.extend(DEFAULTS, $.isPlainObject(options) && options);
+    $.extend(true, DEFAULTS, $.isPlainObject(options) && options);
   }
 }
 

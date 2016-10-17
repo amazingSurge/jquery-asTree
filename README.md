@@ -46,6 +46,11 @@ bower install jquery-asTree --save
 npm install jquery-asTree --save
 ```
 
+#### Install From Yarn
+```sh
+yarn add jquery-asTree
+```
+
 #### Build From Source
 If you want build from source:
 
@@ -160,11 +165,11 @@ You can also save the instances to variable for further use.
 
 ```javascript
 // call directly
-$().asTree('destory');
+$().asTree('destroy');
 
 // or
 var api = $().data('asTree');
-api.destory();
+api.destroy();
 ```
 
 #### enable()

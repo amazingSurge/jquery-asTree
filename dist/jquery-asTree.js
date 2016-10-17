@@ -1,5 +1,5 @@
 /**
-* jQuery asTree v0.3.0
+* jQuery asTree v0.3.1
 * https://github.com/amazingSurge/jquery-asTree
 *
 * Copyright (c) amazingSurge
@@ -609,7 +609,9 @@
      **/
 
     var asTree = function() {
-      function asTree(element, options) {
+      function asTree(element) {
+        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
         _classCallCheck(this, asTree);
 
         this.$element = (0, _jquery2.default)(element);
@@ -651,13 +653,11 @@
       }, {
         key: '_trigger',
         value: function _trigger(eventType) {
-          var _ref;
-
           for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
             params[_key - 1] = arguments[_key];
           }
 
-          var data = (_ref = [this]).concat.apply(_ref, params);
+          var data = [this].concat(params);
 
           // event
           this.$element.trigger(NAMESPACE$1 + '::' + eventType, data);
@@ -672,9 +672,7 @@
           var onFunction = 'on' + eventType;
 
           if (typeof this.options[onFunction] === 'function') {
-            var _options$onFunction;
-
-            (_options$onFunction = this.options[onFunction]).apply.apply(_options$onFunction, [this].concat(params));
+            this.options[onFunction].apply(this, params);
           }
         }
       }, {
@@ -927,7 +925,7 @@
       }], [{
         key: 'setDefaults',
         value: function setDefaults(options) {
-          _jquery2.default.extend(DEFAULTS, _jquery2.default.isPlainObject(options) && options);
+          _jquery2.default.extend(true, DEFAULTS, _jquery2.default.isPlainObject(options) && options);
         }
       }]);
 
@@ -935,13 +933,13 @@
     }();
 
     var info = {
-      version: '0.3.0'
+      version: '0.3.1'
     };
 
     var NAMESPACE = 'asTree';
-    var OtherAsScrollbar = _jquery2.default.fn.asTree;
+    var OtherAsTree = _jquery2.default.fn.asTree;
 
-    var jQueryasTree = function jQueryasTree(options) {
+    var jQueryAsTree = function jQueryAsTree(options) {
       var _this5 = this;
 
       for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -998,14 +996,14 @@
       );
     };
 
-    _jquery2.default.fn.asTree = jQueryasTree;
+    _jquery2.default.fn.asTree = jQueryAsTree;
 
     _jquery2.default.asTree = _jquery2.default.extend({
       setDefaults: asTree.setDefaults,
       noConflict: function noConflict() {
-        _jquery2.default.fn.asTree = OtherAsScrollbar;
+        _jquery2.default.fn.asTree = OtherAsTree;
 
-        return jQueryasTree;
+        return jQueryAsTree;
       }
     }, info);
   }

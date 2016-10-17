@@ -1,5 +1,5 @@
 /**
-* jQuery asTree v0.3.0
+* jQuery asTree v0.3.1
 * https://github.com/amazingSurge/jquery-asTree
 *
 * Copyright (c) amazingSurge
@@ -429,7 +429,7 @@ const NAMESPACE$1 = 'asTree';
  * Plugin constructor
  **/
 class asTree {
-  constructor(element, options) {
+  constructor(element, options = {}) {
     this.$element = $$1(element);
     this.options = $$1.extend(true, {}, DEFAULTS, options);
     this.namespace = this.options.namespace;
@@ -466,7 +466,7 @@ class asTree {
   }
 
   _trigger(eventType, ...params) {
-    let data = [this].concat(...params);
+    let data = [this].concat(params);
 
     // event
     this.$element.trigger(`${NAMESPACE$1}::${eventType}`, data);
@@ -478,7 +478,7 @@ class asTree {
     let onFunction = `on${eventType}`;
 
     if (typeof this.options[onFunction] === 'function') {
-      this.options[onFunction].apply(this, ...params);
+      this.options[onFunction].apply(this, params);
     }
   }
 
@@ -670,18 +670,18 @@ class asTree {
   }
 
   static setDefaults(options) {
-    $$1.extend(DEFAULTS, $$1.isPlainObject(options) && options);
+    $$1.extend(true, DEFAULTS, $$1.isPlainObject(options) && options);
   }
 }
 
 var info = {
-  version:'0.3.0'
+  version:'0.3.1'
 };
 
 const NAMESPACE = 'asTree';
-const OtherAsScrollbar = $$1.fn.asTree;
+const OtherAsTree = $$1.fn.asTree;
 
-const jQueryasTree = function(options, ...args) {
+const jQueryAsTree = function(options, ...args) {
   if (typeof options === 'string') {
     const method = options;
 
@@ -709,12 +709,12 @@ const jQueryasTree = function(options, ...args) {
   });
 };
 
-$$1.fn.asTree = jQueryasTree;
+$$1.fn.asTree = jQueryAsTree;
 
 $$1.asTree = $$1.extend({
   setDefaults: asTree.setDefaults,
   noConflict: function() {
-    $$1.fn.asTree = OtherAsScrollbar;
-    return jQueryasTree;
+    $$1.fn.asTree = OtherAsTree;
+    return jQueryAsTree;
   }
 }, info);

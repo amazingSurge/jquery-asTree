@@ -3,9 +3,9 @@ import asTree from './asTree';
 import info from './info';
 
 const NAMESPACE = 'asTree';
-const OtherAsScrollbar = $.fn.asTree;
+const OtherAsTree = $.fn.asTree;
 
-const jQueryasTree = function(options, ...args) {
+const jQueryAsTree = function(options, ...args) {
   if (typeof options === 'string') {
     const method = options;
 
@@ -33,12 +33,12 @@ const jQueryasTree = function(options, ...args) {
   });
 };
 
-$.fn.asTree = jQueryasTree;
+$.fn.asTree = jQueryAsTree;
 
 $.asTree = $.extend({
   setDefaults: asTree.setDefaults,
   noConflict: function() {
-    $.fn.asTree = OtherAsScrollbar;
-    return jQueryasTree;
+    $.fn.asTree = OtherAsTree;
+    return jQueryAsTree;
   }
 }, info);
