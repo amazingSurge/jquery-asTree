@@ -1,5 +1,5 @@
 /**
-* jQuery asTree v0.3.1
+* jQuery asTree v0.3.2
 * https://github.com/amazingSurge/jquery-asTree
 *
 * Copyright (c) amazingSurge
@@ -415,8 +415,8 @@ class HtmlParser {
 
           $node.children('div').replaceWith(html);
 
-          this.renderTree($node, false, api)
-        })
+          this.renderTree($node, false, api);
+        });
       };
       _iterate($children);
     }
@@ -576,7 +576,7 @@ class asTree {
 
       let node = this.root;
       for (let i = 0; i < position.length; i++) {
-        node = _iterate(node, position[i] - 1)
+        node = _iterate(node, position[i] - 1);
       }
       return node;
 
@@ -675,7 +675,7 @@ class asTree {
 }
 
 var info = {
-  version:'0.3.1'
+  version:'0.3.2'
 };
 
 const NAMESPACE = 'asTree';

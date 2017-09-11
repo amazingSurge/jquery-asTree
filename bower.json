@@ -1,6 +1,6 @@
 {
   "name": "jquery-asTree",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A jquery tree plugin.",
   "main": "dist/jquery-asTree.js",
   "copyright": "amazingSurge",
